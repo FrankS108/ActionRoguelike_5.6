@@ -3,46 +3,72 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraSystem.h"
 #include "GameFramework/Character.h"
-#include "RogueCharacter.generated.h"
+#include "RoguePlayerCharacter.generated.h"
 
+class ARogueProjectileMagic;
 struct FInputActionInstance;
 struct FInputActionValue;
 class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
-
+class UAnimMontage;
+class UNiagaraSystem;
 UCLASS()
-class ACTIONROGUELIKE_API ARogueCharacter : public ACharacter
+class ACTIONROGUELIKE_API ARoguePlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	ARogueCharacter();
+	ARoguePlayerCharacter();
 
 protected:
 	
+	UPROPERTY(EditDefaultsOnly, Category="PrimaryAttack")
+	TSubclassOf<ARogueProjectileMagic> ProjectileClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category="PrimaryAttack")
+	TObjectPtr<UNiagaraSystem> CastingEffect;
+	
+	UPROPERTY(EditDefaultsOnly, Category="PrimaryAttack")
+	TObjectPtr<USoundBase> CastingSound;
+	
+	UPROPERTY(VisibleAnywhere, Category="PrimaryAttack")
+	FName MuzzleSocketName;
+	
+	UPROPERTY(EditDefaultsOnly, Category="PrimaryAttack")
+	TObjectPtr<UAnimMontage> AttackMontage;
+		
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> Input_Move;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> Input_Look;
-
+	
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<UInputAction> Input_PrimaryAttack;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<UInputAction> Input_Jump;
 	
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	TObjectPtr<UCameraComponent> CameraComponent;
 	
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	
-	
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	void Move(const FInputActionValue& InValue);
 	
 	void Look(const FInputActionInstance& InValue);
+	
+	void PrimaryAttack();
+	
+	void AttackTimerElapsed();
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
