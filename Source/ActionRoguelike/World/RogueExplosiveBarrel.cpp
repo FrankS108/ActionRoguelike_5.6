@@ -13,12 +13,12 @@
 // Sets default values
 ARogueExplosiveBarrel::ARogueExplosiveBarrel()
 {
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetSimulatePhysics(true);
-	SetRootComponent(MeshComp);
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComponent->SetSimulatePhysics(true);
+	SetRootComponent(MeshComponent);
 	
 	RadialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComp"));
-	RadialForceComponent->SetupAttachment(MeshComp);
+	RadialForceComponent->SetupAttachment(MeshComponent);
 	RadialForceComponent->ForceStrength = 2000.0f;
 	RadialForceComponent->Radius = 200.0f;
 	
@@ -39,8 +39,8 @@ float ARogueExplosiveBarrel::TakeDamage(float DamageAmount, struct FDamageEvent 
 		return ActualDamage;
 	}
 	
-	LoopedFlamesComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(FlamesNiagaraSystem, MeshComp, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::Type::SnapToTarget, true);
-	LoopedFlamesAudioComponent = UGameplayStatics::SpawnSoundAttached(FlamesSound, MeshComp);
+	LoopedFlamesComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(FlamesNiagaraSystem, MeshComponent, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::Type::SnapToTarget, true);
+	LoopedFlamesAudioComponent = UGameplayStatics::SpawnSoundAttached(FlamesSound, MeshComponent);
 	GetWorld()->GetTimerManager().SetTimer(ExplodeTimerHandle, this, &ThisClass::Explode, DelayTimeExplode);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -58,6 +58,8 @@ void ARogueExplosiveBarrel::Explode()
 	{
 		LoopedFlamesComponent->Deactivate();
 	}
+	MeshComponent->AddImpulse(FVector::UpVector * 1000, NAME_None, true);
+	MeshComponent->AddAngularImpulseInDegrees(FVector::RightVector * 1000, NAME_None, true);
 	
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ExplosionNiagaraSystem, GetActorLocation());
 	UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());

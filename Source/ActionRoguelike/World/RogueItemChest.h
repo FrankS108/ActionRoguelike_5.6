@@ -30,10 +30,13 @@ protected:
 	float AnimationTargetPitch = 120.0f;
 	
 	float CurrentAnimationPitch = 0.0f;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void ChestAnimationComplete();
 
 public:
 	
-	virtual void Interact() override;
+	virtual void Interact_Implementation() override;
 	
 	virtual void Tick(float DeltaTime) override;
 };

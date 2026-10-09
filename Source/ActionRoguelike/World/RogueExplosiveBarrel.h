@@ -26,7 +26,7 @@ protected:
 	float DelayTimeExplode;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Componentss")
-	TObjectPtr<UStaticMeshComponent> MeshComp;
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Components")
 	TObjectPtr<URadialForceComponent> RadialForceComponent;
@@ -55,6 +55,7 @@ protected:
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	
+	UFUNCTION(BlueprintCallable)
 	void Explode();
 
 };

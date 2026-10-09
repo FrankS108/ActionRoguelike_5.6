@@ -3,28 +3,42 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NiagaraSystem.h"
 #include "RogueProjectile.h"
-#include "RogueProjectileMagic.generated.h"
+#include "RogueProjectile_Teleport.generated.h"
 
 class UNiagaraSystem;
 class USoundBase;
 
-UCLASS(Abstract)
-class ACTIONROGUELIKE_API ARogueProjectileMagic : public ARogueProjectile
+UCLASS()
+class ACTIONROGUELIKE_API ARogueProjectile_Teleport : public ARogueProjectile
 {
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, Category="Components")
+	float AutoTeleportDelay;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Components")
+	float TeleportDelay;
+	
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	TSubclassOf<UDamageType> DamageType;
-
+	
+	FTimerHandle TeleportTimerHandle;
+	
+	virtual void BeginPlay() override;
+	
 	UFUNCTION()
 	void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
 	
+	void StartDelayedTeleport();
+	
+	void HandleTeleportation();
+
 public:
 	
 	virtual void PostInitializeComponents() override;
-	ARogueProjectileMagic();
+	
+	ARogueProjectile_Teleport();
 
 };
